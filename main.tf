@@ -57,18 +57,34 @@ resource "aws_iam_role_policy_attachment" "attach_iam_policy_to_iam_role" {
 
 data "archive_file" "zip_the_python_code" {
   type        = "zip"
-  source_dir  = "${path.module}/python/"
-  output_path = "${path.module}/python/hello-python.zip"
+  // source_dir  = "${path.module}/src/"
+  source_file  = "${path.module}/src/hello-python.py"
+  output_path = "${path.module}/src/hello-python.zip"
+}
+
+data "archive_file" "zip_the_js_code" {
+  type        = "zip"
+  source_file  = "${path.module}/src/hello-js.js"
+  output_path = "${path.module}/src/hello-js.zip"
 }
 
 # Create a lambda function
 # In terraform ${path.module} is the current directory.
-resource "aws_lambda_function" "terraform_lambda_func" {
-  filename      = "${path.module}/python/hello-python.zip"
+resource "aws_lambda_function" "terraform_lambda_func_py" {
+  filename      = data.archive_file.zip_the_python_code.output_path
   function_name = "Hello-Python-Lambda-Function"
   role          = aws_iam_role.lambda_role.arn
   handler       = "hello-python.lambda_handler"
   runtime       = "python3.8"
+  depends_on    = [aws_iam_role_policy_attachment.attach_iam_policy_to_iam_role]
+}
+
+resource "aws_lambda_function" "terraform_lambda_func_js" {
+  filename      = data.archive_file.zip_the_js_code.output_path
+  function_name = "Hello-JS-Lambda-Function"
+  role          = aws_iam_role.lambda_role.arn
+  handler       = "hello-js.lambda_handler"
+  runtime       = "nodejs18.x"
   depends_on    = [aws_iam_role_policy_attachment.attach_iam_policy_to_iam_role]
 }
 
