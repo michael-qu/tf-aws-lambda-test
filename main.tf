@@ -55,6 +55,7 @@ resource "aws_iam_role_policy_attachment" "attach_iam_policy_to_iam_role" {
 
 # Generates an archive from content, a file, or a directory of files.
 
+/*
 data "archive_file" "zip_the_python_code" {
   type        = "zip"
   // source_dir  = "${path.module}/src/"
@@ -67,9 +68,17 @@ data "archive_file" "zip_the_js_code" {
   source_file  = "${path.module}/src/hello-js.js"
   output_path = "${path.module}/src/hello-js.zip"
 }
+*/
+
+data "archive_file" "zip_the_ts_code" {
+  type        = "zip"
+  source_file  = "${path.module}/build/aws-ts-test.js"
+  output_path = "${path.module}/src/aws-ts-test.zip"
+}
 
 # Create a lambda function
 # In terraform ${path.module} is the current directory.
+/*
 resource "aws_lambda_function" "terraform_lambda_func_py" {
   filename      = data.archive_file.zip_the_python_code.output_path
   function_name = "Hello-Python-Lambda-Function"
@@ -84,6 +93,16 @@ resource "aws_lambda_function" "terraform_lambda_func_js" {
   function_name = "Hello-JS-Lambda-Function"
   role          = aws_iam_role.lambda_role.arn
   handler       = "hello-js.lambda_handler"
+  runtime       = "nodejs18.x"
+  depends_on    = [aws_iam_role_policy_attachment.attach_iam_policy_to_iam_role]
+}
+*/
+
+resource "aws_lambda_function" "terraform_lambda_func_ts" {
+  filename      = data.archive_file.zip_the_ts_code.output_path
+  function_name = "AWS-TS-Test-Lambda-Function"
+  role          = aws_iam_role.lambda_role.arn
+  handler       = "aws-ts-test.handler"
   runtime       = "nodejs18.x"
   depends_on    = [aws_iam_role_policy_attachment.attach_iam_policy_to_iam_role]
 }

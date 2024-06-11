@@ -1,0 +1,20 @@
+{
+  "name": "tf-aws-lambda-test",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "prebuild": "rm -rf build", 
+    "build": "esbuild src/aws-ts-test.ts --bundle --minify --sourcemap --platform=node --target=es2020 --outfile=build/aws-ts-test.js", 
+    "postbuild": "cd build && zip -r aws-ts.test.zip aws-ts.test.js*",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "devDependencies": {
+    "@types/aws-lambda": "^8.10.138",
+    "@types/node": "^20.14.2",
+    "esbuild": "^0.21.5",
+    "ts-node": "^10.9.2"
+  }
+}

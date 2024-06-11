@@ -26,4 +26,7 @@ yarn-error.log*
 
 *.zip
 
+# infrastructure
 /.terraform
+.tsstate
+.tfstate.backup
