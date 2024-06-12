@@ -1,3 +1,8 @@
+locals {
+  function_name      = "AWS-TS-Test-Lambda-Function"
+  lambda_timeout_sec = 30
+}
+
 provider "aws" {
   region = "us-east-1"
 }
@@ -100,10 +105,13 @@ resource "aws_lambda_function" "terraform_lambda_func_js" {
 
 resource "aws_lambda_function" "terraform_lambda_func_ts" {
   filename      = data.archive_file.zip_the_ts_code.output_path
-  function_name = "AWS-TS-Test-Lambda-Function"
+  function_name = local.function_name
   role          = aws_iam_role.lambda_role.arn
   handler       = "aws-ts-test.handler"
   runtime       = "nodejs18.x"
+  architectures = ["arm64"]
+  timeout       = local.lambda_timeout_sec
+  memory_size   = 200
   depends_on    = [aws_iam_role_policy_attachment.attach_iam_policy_to_iam_role]
 }
 
